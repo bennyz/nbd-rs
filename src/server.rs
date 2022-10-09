@@ -1,9 +1,10 @@
+use tokio::io::AsyncWriteExt;
 use tokio::net::TcpListener;
 use tokio::net::TcpStream;
 use tokio::net::ToSocketAddrs;
-use tokio_util::codec::Framed;
-use tokio_util::codec::LinesCodec;
-use futures_util::StreamExt;
+
+use crate::frame::Frame;
+use crate::frame::HandshakeFlags;
 
 pub struct Server {
     listener: TcpListener,
@@ -30,12 +31,34 @@ impl Server {
     }
 
     async fn process(&self, socket: TcpStream) -> anyhow::Result<()> {
-        let mut client = Framed::new(socket, LinesCodec::new());
-        while let Some(Ok(line)) = client.next().await {
-            println!("{line}")
-        }
+        let conn = Connection::new(socket);
+        conn.handshake().await?;
 
         Ok(())
+    }
+}
 
+pub struct Connection {
+    conn: TcpStream,
+}
+
+impl Connection {
+    pub fn new(conn: TcpStream) -> Self {
+        Self { conn }
+    }
+
+    pub async fn handshake(mut self) -> anyhow::Result<()> {
+        let handshake_flags = HandshakeFlags::FIXED_NEWSTYLE | HandshakeFlags::NO_ZEROES;
+        self.send_frame(Frame::ServerHandshake(handshake_flags))
+            .await?;
+
+        Ok(())
+    }
+
+    pub async fn send_frame(&mut self, frame: Frame) -> anyhow::Result<()> {
+        frame.write(&mut self.conn).await?;
+        self.conn.flush().await?;
+
+        Ok(())
     }
 }
