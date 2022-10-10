@@ -10,6 +10,16 @@ pub const NBD_REP_MAGIC: u64 = 0x3e889045565a9;
 pub const NBD_SIMPLE_REPLY_MAGIC: u32 = 0x67446698;
 pub const NBD_REQUEST_MAGIC: u32 = 0x25609513;
 
+pub const NBD_OPT_EXPORT_NAME: u32 = 1;
+pub const NBD_OPT_ABORT: u32 = 2;
+pub const NBD_OPT_LIST: u32 = 3;
+pub const NBD_OPT_STARTTLS: u32 = 5;
+pub const NBD_OPT_INFO: u32 = 6;
+pub const NBD_OPT_GO: u32 = 7;
+pub const NBD_OPT_STRUCTURED_REPLY: u32 = 8;
+pub const NBD_OPT_LIST_META_CONTEXT: u32 = 9;
+pub const NBD_OPT_SET_META_CONTEXT: u32 = 10;
+
 pub const NBD_REQUEST_SIZE: u32 = 28;
 pub const NBD_CMD_FLAG_FUA: u16 = 1 << 0;
 pub const NBD_CMD_FLAG_NO_HOLE: u16 = 1 << 1;
