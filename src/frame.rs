@@ -12,6 +12,11 @@ bitflags! {
         const FIXED_NEWSTYLE = consts::NBD_FLAG_FIXED_NEWSTYLE;
         const NO_ZEROES      = consts::NBD_FLAG_NO_ZEROES;
     }
+
+    pub(crate) struct ClientHandshakeFlags: u32 {
+        const FIXED_NEWSTYLE = consts::NBD_FLAG_C_FIXED_NEWSTYLE;
+        const NO_ZEROES      = consts::NBD_FLAG_C_NO_ZEROES;
+    }
 }
 
 impl Frame {
@@ -22,7 +27,7 @@ impl Frame {
                 // S: 64 bits, 0x4e42444d41474943 (ASCII 'NBDMAGIC') (as in the old style handshake)
                 to.write_u64(consts::NBD_INIT_MAGIC).await?;
 
-                //  S: 64 bits, 0x49484156454F5054 (ASCII 'IHAVEOPT') (note different magic number)
+                // S: 64 bits, 0x49484156454F5054 (ASCII 'IHAVEOPT') (note different magic number)
                 to.write_u64(consts::NBD_OPTS_MAGIC).await?;
 
                 // S: 16 bits, handshake flags
