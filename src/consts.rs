@@ -58,3 +58,48 @@ pub const NBD_REPLY_TYPE_NONE: u16 = 0;
 pub const NBD_REPLY_TYPE_OFFSET_DATA: u16 = 1;
 pub const NBD_REPLY_TYPE_OFFSET_HOLE: u16 = 2;
 pub const NBD_REPLY_TYPE_BLOCK_STATUS: u16 = 5;
+
+#[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum NbdReply {
+    Ack = 1,
+    Server = 2,
+    Info = 3,
+    MetaContext = 4,
+
+    // Errors
+    NbdRepErrUnsup = 1 | NBD_REP_FLAG_ERROR,
+}
+
+#[repr(u32)]
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub enum NbdOpt {
+    Export = 1,
+    ExportName = 2,
+    Abort = 3,
+    List = 4,
+    StartTls = 5,
+    Info = 6,
+    Go = 7,
+    StructuredReply = 8,
+    ListMetaContext = 9,
+    SetMetaContext = 10,
+    Empty = 99,
+}
+
+impl From<u32> for NbdOpt {
+    fn from(code: u32) -> NbdOpt {
+        match code {
+            NBD_OPT_EXPORT_NAME => Self::ExportName,
+            NBD_OPT_ABORT => Self::Abort,
+            NBD_OPT_LIST => Self::List,
+            NBD_OPT_STARTTLS => Self::StartTls,
+            NBD_OPT_INFO => Self::Info,
+            NBD_OPT_GO => Self::Go,
+            NBD_OPT_STRUCTURED_REPLY => Self::StructuredReply,
+            NBD_OPT_LIST_META_CONTEXT => Self::ListMetaContext,
+            NBD_OPT_SET_META_CONTEXT => Self::SetMetaContext,
+            _ => Self::Empty,
+        }
+    }
+}

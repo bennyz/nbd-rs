@@ -31,8 +31,7 @@ impl Connection {
         Ok(())
     }
 
-    pub async fn get_frame(&mut self, expected: RequestType) -> anyhow::Result<()> {
-        Frame::read(&mut self.conn, expected).await?;
-        Ok(())
+    pub async fn get_frame(&mut self, expected: RequestType) -> anyhow::Result<Frame> {
+        Ok(Frame::read(&mut self.conn, expected).await?)
     }
 }
