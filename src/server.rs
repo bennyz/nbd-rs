@@ -1,6 +1,6 @@
-use tokio::net::{TcpListener, ToSocketAddrs, TcpStream};
+use tokio::net::{TcpListener, TcpStream, ToSocketAddrs};
 
-use crate::{handshake::connection::Connection, consts::NbdOpt};
+use crate::{consts::NbdOpt, handshake::connection::Connection};
 
 #[derive(Debug)]
 // InteractionResult will be used to determine whether to abort or continue into the transmission phase.
@@ -55,7 +55,7 @@ impl Server {
                 NbdOpt::ExportName => todo!(),
                 NbdOpt::Abort => {
                     conn.ack(option).await?;
-                    break
+                    break;
                 }
                 NbdOpt::List => todo!(),
                 NbdOpt::StartTls => todo!(),
@@ -63,9 +63,13 @@ impl Server {
                 NbdOpt::Go => todo!(),
                 NbdOpt::StructuredReply => {
                     conn.ack(option).await?;
-                },
-                NbdOpt::ListMetaContext => todo!(),
-                NbdOpt::SetMetaContext => todo!(),
+                }
+                NbdOpt::ListMetaContext => {
+                    conn.unsupported(option).await?;
+                }
+                NbdOpt::SetMetaContext => {
+                    conn.unsupported(option).await?;
+                }
                 NbdOpt::Empty => todo!(),
             }
         }

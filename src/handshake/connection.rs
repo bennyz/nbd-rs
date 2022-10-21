@@ -69,9 +69,7 @@ impl Connection {
         }
 
         let option = self.conn.read_u32().await?;
-        dbg!(option);
         let len = self.conn.read_u32().await?;
-        dbg!(len);
         let mut client_request = ClientOptionRequest {
             option: NbdOpt::from(option),
             data: None,
@@ -88,6 +86,11 @@ impl Connection {
 
     pub async fn ack(&mut self, option: NbdOpt) -> anyhow::Result<()> {
         self.reply(option, NbdReply::Ack, 0, b"").await?;
+        Ok(())
+    }
+
+    pub async fn unsupported(&mut self, option: NbdOpt) -> anyhow::Result<()> {
+        self.reply(option, NbdReply::NbdRepErrUnsup, 0, b"").await?;
         Ok(())
     }
 
